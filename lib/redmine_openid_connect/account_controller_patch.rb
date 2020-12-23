@@ -88,7 +88,11 @@ module RedmineOpenidConnect
         end
 
         # Check if there's already an existing user
-        user = User.find_by_mail(user_info["email"])
+	email = user_info["email"]
+	if oic_session.enable_alt_email?
+          email = oic_session.alt_email(user_info)
+	end
+        user = User.find_by_mail(email)
 
         if user.nil?
           user = User.new
@@ -109,7 +113,7 @@ module RedmineOpenidConnect
           attributes = {
             firstname: firstname || "",
             lastname: lastname || "",
-            mail: user_info["email"],
+            mail: email,
             mail_notification: 'only_my_events',
             last_login_on: Time.now
           }

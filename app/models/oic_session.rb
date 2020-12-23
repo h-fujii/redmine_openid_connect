@@ -249,4 +249,14 @@ class OicSession < ActiveRecord::Base
     end
   end
 
+  def enable_alt_email?
+    return client_config["alt_email"]
+  end
+
+  def alt_email(user_info) 
+    claim = client_config["alt_email_local"]
+    local_part = user_info[claim]
+    return local_part + "@" + client_config["alt_email_domain"]
+  end
+
 end

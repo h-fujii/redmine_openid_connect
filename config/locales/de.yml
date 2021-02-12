@@ -4,6 +4,8 @@ de:
     header: OpenID Connect Konfiguration
     client_id: Client-ID
     openid_connect_server_url: OpenID Connect Server-Url
+    openid_connect_tone_endpoint_url: OpenID Connect Token Endpoint url
+    openid_connect_userinfo_endoint_url: OpenID Connect UserInfo Endpoint url
     scopes: OpenID Connect Scopes (kommasepariert)
     client_secret: Client-Secret
     group: Rolle "darf einloggen" (leer lassen, falls jeder authentifizierte User einloggen darf)

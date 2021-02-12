@@ -49,8 +49,34 @@ class OicSession < ActiveRecord::Base
     self.class.dynamic_config
   end
 
+  def self.get_token_endpoint_url
+    logger.debug "self.get_token_endpoint_url  #{client_config}, #{client_config['openid_connect_token_endpoint_url']}"
+    if client_config['openid_connect_token_endpoint_url'].nil?
+      return dynamic_config["token_endpoint"]
+    end
+    return client_config['openid_connect_token_endpoint_url']
+  end
+
+  def get_token_endpoint_url
+    self.class.get_token_endpoint_url
+  end
+
+  def self.get_userinfo_endpoint_url
+    logger.debug "self.self.get_userinfo_endpoint_url  #{client_config}, #{client_config['openid_connect_userinfo_endpoint_url']}"
+
+    if client_config['openid_connect_userinfo_endpoint_url'].nil?
+      return dynamic_config["userinfo_endpoint"]
+    end
+    return client_config['openid_connect_userinfo_endpoint_url']
+  end
+
+  def get_userinfo_endpoint_url
+    self.class.get_userinfo_endpoint_url
+  end
+
   def self.get_token(query)
-    uri = dynamic_config['token_endpoint']
+    # uri = dynamic_config['token_endpoint']
+    uri = get_token_endpoint_url
 
     HTTParty::Basement.default_options.update(verify: false) if client_config['disable_ssl_validation']
     response = HTTParty.post(
@@ -97,7 +123,8 @@ class OicSession < ActiveRecord::Base
   end
 
   def get_user_info!
-    uri = dynamic_config['userinfo_endpoint']
+    # uri = dynamic_config['userinfo_endpoint']
+     uri = get_userinfo_endpoint_url
 
     HTTParty::Basement.default_options.update(verify: false) if client_config['disable_ssl_validation']
     response = HTTParty.get(
@@ -254,6 +281,7 @@ class OicSession < ActiveRecord::Base
   end
 
   def alt_email(user_info) 
+    logger.debug "self.alt_email  #{user_info}"
     claim = client_config["alt_email_local"]
     local_part = user_info[claim]
     return local_part + "@" + client_config["alt_email_domain"]
